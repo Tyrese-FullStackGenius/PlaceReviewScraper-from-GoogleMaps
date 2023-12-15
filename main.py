@@ -28,14 +28,14 @@ def get_reviews(place_id):
         search = GoogleSearch(params)
         results = search.get_dict()
         if not "reviews" in results:
-            return ("Can't find reviews ...")
+            return all_reviews
         all_reviews = all_reviews + results["reviews"]
         if "serpapi_pagination" in results and "next_page_token" in results["serpapi_pagination"]:
             next_page_token = results["serpapi_pagination"]["next_page_token"]
         else:
             break
-        if count == limit_count:
-            break
+        # if count == limit_count:
+        #     break
     return all_reviews
 
 
