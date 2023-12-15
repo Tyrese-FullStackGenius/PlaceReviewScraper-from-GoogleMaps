@@ -1,0 +1,5 @@
+.env
+.vscode
+temp
+public/*
+!public/index.html

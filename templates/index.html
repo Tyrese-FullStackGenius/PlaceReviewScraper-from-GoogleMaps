@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Place Review Scraping from Google Maps</title>
+  </head>
+  <body
+    style="
+      width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 200px;
+    "
+  >
+    <div style="width: 100%; text-align: center">
+      <h1>Place Review Scraping from Google Maps</h1>
+    </div>
+    <form
+      id="submitForm"
+      style="width: 100%; display: flex; gap: 10px; padding: 20px 0"
+    >
+      <input
+        id="placeIdInput"
+        name="place_id"
+        style="width: 100%; padding: 10px 20px; outline: 0"
+      />
+      <input
+        type="submit"
+        value="Scrape Places"
+        id="submitBtn"
+        style="width: 160px; padding: 10px 20px"
+      />
+    </form>
+    <div style="width: 100%; display: flex; padding: 20px 0">
+      <div style="width: 50%; text-align: center">
+        <a href="#" target="new" id="downloadCSV" style="display: none">
+          Download CSV
+        </a>
+      </div>
+      <div style="width: 50%; text-align: center">
+        <a href="#" target="new" id="downloadJSON" style="display: none">
+          Download JSON
+        </a>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("submitForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          document.getElementById("submitBtn").disabled = true;
+          document.getElementById("submitBtn").value = "Scraping...";
+
+          const placeId = document.getElementById("placeIdInput").value;
+          fetch(`/api/review/${placeId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then(async function (response) {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error((await response.json()).error);
+              }
+            })
+            .then(function (res) {
+              document.getElementById("downloadCSV").style.display = "inline";
+              document.getElementById("downloadCSV").href = res.csv_file;
+              document.getElementById("downloadJSON").style.display = "inline";
+              document.getElementById("downloadJSON").href = res.json_file;
+            })
+            .catch(function (err) {
+              document.getElementById("downloadCSV").style.display = "none";
+              document.getElementById("downloadCSV").href = "#";
+              document.getElementById("downloadJSON").style.display = "none";
+              document.getElementById("downloadJSON").href = "#";
+              console.log(err);
+              alert(err.message);
+            })
+            .finally(function () {
+              document.getElementById("submitBtn").disabled = false;
+              document.getElementById("submitBtn").value = "Scrape Places";
+            });
+        });
+    </script>
+  </body>
+</html>
